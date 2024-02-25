@@ -1,26 +1,162 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { ExtensionContext } from 'vscode';
+import classNamesCategories from './classNamesCategories';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+const decorationTypes = {
+  spacing: {
+    category: 'spacing',
+    decorations: {
+      subtle: vscode.window.createTextEditorDecorationType({
+        backgroundColor: 'rgba(0, 127, 244, 0.07)',
+        borderRadius: '7px',
+      }),
+      hivis: vscode.window.createTextEditorDecorationType({
+        backgroundColor: 'rgba(0, 127, 244, 0.07)',
+        borderRadius: '2px 2px 7px 7px',
+        borderColor: 'rgba(63, 114, 160, 1)',
+        borderWidth: '0px 2px 2px 2px',
+        borderStyle: 'solid',
+        // color: 'rgba(145, 198, 246, 1)',
+      }),
+    },
+  },
+};
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "tailarchy" is now active!');
+async function addHighlights() {
+  const activeTextEditor = vscode.window.activeTextEditor;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('tailarchy.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from tailarchy!');
-	});
+  if (!activeTextEditor) return;
 
-	context.subscriptions.push(disposable);
+  const activeTextEditorDocumentText = activeTextEditor.document.getText();
+
+  let decorationsArray = [];
+
+  for (const classNamesType of Object.values(classNamesCategories)) {
+    for (const target of classNamesType.targets) {
+      let match;
+      let regex = new RegExp(
+        '(?<=\\s|\'|"|^)' + target.name + '[^\\s\'"]*(?=\\s|\'|"|$)',
+        'g'
+      );
+
+      while ((match = regex.exec(activeTextEditorDocumentText))) {
+        let startPos = activeTextEditor.document.positionAt(match.index);
+
+        let endPos = activeTextEditor.document.positionAt(
+          match.index + match[0].length
+        );
+
+        let decoration = {
+          range: new vscode.Range(startPos, endPos),
+          hoverMessage: '**' + classNamesType.category + '** rule(s)',
+        };
+
+        decorationsArray.push(decoration);
+      }
+    }
+
+    activeTextEditor.setDecorations(
+      decorationTypes[classNamesType.category as keyof typeof decorationTypes]
+        .decorations.hivis,
+      decorationsArray
+    );
+  }
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+function activate(context: ExtensionContext) {
+  const activeTextEditor = vscode.window.activeTextEditor;
+  if (!activeTextEditor) return;
+
+  activeTextEditor.edit((editBuilder) => {
+    console.log('editBuilder');
+    addHighlights();
+  });
+
+  vscode.window.onDidChangeActiveTextEditor(
+    (editor) => {
+      console.log('onDidChangeActiveTextEditor');
+      addHighlights();
+    },
+    null,
+    context.subscriptions
+  );
+
+  vscode.workspace.onDidChangeTextDocument(
+    (event) => {
+      console.log('onDidChangeTextDocument');
+      addHighlights();
+      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
+      //   triggerUpdateDecorations();
+      // }
+    },
+    null,
+    context.subscriptions
+  );
+
+  vscode.workspace.onDidSaveTextDocument(
+    (event) => {
+      console.log('onDidSaveTextDocument');
+      addHighlights();
+      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
+      //   triggerUpdateDecorations();
+      // }
+    },
+    null,
+    context.subscriptions
+  );
+
+  vscode.window.onDidChangeActiveTextEditor(
+    (editor) => {
+      console.log('onDidChangeActiveTextEditor');
+    },
+    null,
+    context.subscriptions
+  );
+
+  // vscode.workspace.onDidChangeTextDocument((event) => {
+  //   console.log('onDidChangeTextDocument');
+  //   if (event.document === vscode.window.activeTextEditor!.document) {
+  //     console.log('Document changed.');
+  //   }
+  // });
+
+  // vscode.workspace.onDidChangeTextDocument((event) => {
+  //   console.log('onDidChangeTextDocument');
+
+  //   // if (event.document === activeTextEditor.document) {
+  //   addHighlights();
+  //   // }
+  // }, context.subscriptions);
+
+  const subscriptionCommandDisposable = vscode.commands.registerCommand(
+    'tailarchy.highlight',
+    () => {
+      try {
+        console.log('command run highlight');
+        // vscode.workspace.onDidChangeTextDocument(
+        //   (event) => {
+        //     console.log('onDidSaveTextDocument');
+        //     addHighlights();
+        //     // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
+        //     //   triggerUpdateDecorations();
+        //     // }
+        //   },
+        //   null,
+        //   context.subscriptions
+        // );
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  );
+
+  context.subscriptions.push(subscriptionCommandDisposable);
+}
+exports.activate = activate;
+
+function deactivate() {}
+
+module.exports = {
+  activate,
+  deactivate,
+};

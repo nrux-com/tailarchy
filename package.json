@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "tailarchy.helloWorld",
-        "title": "Hello World"
+        "command": "tailarchy.highlight",
+        "title": "Highlight Tailwind Class Names"
       }
     ]
   },
