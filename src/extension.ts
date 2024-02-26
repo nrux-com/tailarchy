@@ -10,24 +10,24 @@ async function addHighlights() {
 
   const activeTextEditorDocumentText = activeTextEditor.document.getText();
 
-  let decorationsArray = [];
+  const decorationsArray = [];
 
   for (const classNamesType of Object.values(classNamesCategories)) {
     for (const target of classNamesType.targets) {
       let match;
-      let regex = new RegExp(
+      const regex = new RegExp(
         '(?<=\\s|\'|"|^)' + target.name + '[^\\s\'"]*(?=\\s|\'|"|$)',
         'g'
       );
 
       while ((match = regex.exec(activeTextEditorDocumentText))) {
-        let startPos = activeTextEditor.document.positionAt(match.index);
+        const startPos = activeTextEditor.document.positionAt(match.index);
 
-        let endPos = activeTextEditor.document.positionAt(
+        const endPos = activeTextEditor.document.positionAt(
           match.index + match[0].length
         );
 
-        let decoration = {
+        const decoration = {
           range: new vscode.Range(startPos, endPos),
           hoverMessage: '**' + classNamesType.category + '** rule(s)',
         };
