@@ -13,7 +13,7 @@ const decorationTypes = {
       hivis: vscode.window.createTextEditorDecorationType({
         backgroundColor: 'rgba(0, 127, 244, 0.07)',
         borderRadius: '2px 2px 7px 7px',
-        borderColor: 'rgba(63, 114, 160, 1)',
+        borderColor: 'rgba(63, 114, 160, 0.9)',
         borderWidth: '0px 2px 2px 2px',
         borderStyle: 'solid',
         // color: 'rgba(145, 198, 246, 1)',
@@ -133,17 +133,6 @@ function activate(context: ExtensionContext) {
     () => {
       try {
         console.log('command run highlight');
-        // vscode.workspace.onDidChangeTextDocument(
-        //   (event) => {
-        //     console.log('onDidSaveTextDocument');
-        //     addHighlights();
-        //     // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
-        //     //   triggerUpdateDecorations();
-        //     // }
-        //   },
-        //   null,
-        //   context.subscriptions
-        // );
       } catch (e) {
         console.log(e);
       }
