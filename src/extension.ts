@@ -3,6 +3,55 @@ import { ExtensionContext } from 'vscode';
 import classNamesCategories from './classNamesCategories';
 import decorationTypes from './decorationTypes';
 
+type ClassNameCategory = {
+  categoryName: string;
+  categoryUri: string;
+  targets: string[];
+};
+
+type ClassNamesCategories = {
+  [categoryUri: string]: ClassNameCategory;
+};
+
+function initChangeListeners(): Array<vscode.Disposable> {
+  const subscriptions: Array<vscode.Disposable> = [];
+
+  vscode.window.onDidChangeActiveTextEditor(
+    (editor) => {
+      console.log('onDidChangeActiveTextEditor');
+      addHighlights();
+    },
+    null,
+    subscriptions
+  );
+
+  vscode.workspace.onDidChangeTextDocument(
+    (event) => {
+      console.log('onDidChangeTextDocument');
+      addHighlights();
+      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
+      //   triggerUpdateDecorations();
+      // }
+    },
+    null,
+    subscriptions
+  );
+
+  vscode.workspace.onDidSaveTextDocument(
+    (event) => {
+      console.log('onDidSaveTextDocument');
+      addHighlights();
+      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
+      //   triggerUpdateDecorations();
+      // }
+    },
+    null,
+    subscriptions
+  );
+
+  return subscriptions;
+}
+
 async function addHighlights() {
   const activeTextEditor = vscode.window.activeTextEditor;
 
@@ -10,13 +59,12 @@ async function addHighlights() {
 
   const activeTextEditorDocumentText = activeTextEditor.document.getText();
 
-  const decorationsArray = [];
-
   for (const classNamesType of Object.values(classNamesCategories)) {
+    const decorationsArray = [];
     for (const target of classNamesType.targets) {
       let match;
       const regex = new RegExp(
-        '(?<=\\s|\'|"|^)' + target.name + '[^\\s\'"]*(?=\\s|\'|"|$)',
+        '(?<=\\s|\'|"|^)' + target + '[^\\s\'"]*(?=\\s|\'|"|$)',
         'g'
       );
 
@@ -29,18 +77,19 @@ async function addHighlights() {
 
         const decoration = {
           range: new vscode.Range(startPos, endPos),
-          hoverMessage: '**' + classNamesType.category + '** rule(s)',
+          hoverMessage: '**' + classNamesType.categoryName + '** rule(s)',
         };
 
         decorationsArray.push(decoration);
       }
     }
 
-    activeTextEditor.setDecorations(
-      decorationTypes[classNamesType.category as keyof typeof decorationTypes]
-        .decorations.hivis,
-      decorationsArray
-    );
+    const decorationTypeKey =
+      classNamesType.categoryUri as keyof typeof decorationTypes;
+
+    const decorationType = decorationTypes[decorationTypeKey].decorations.hivis;
+
+    activeTextEditor.setDecorations(decorationType, decorationsArray);
   }
 }
 
@@ -48,66 +97,8 @@ function activate(context: ExtensionContext) {
   const activeTextEditor = vscode.window.activeTextEditor;
   if (!activeTextEditor) return;
 
-  activeTextEditor.edit((editBuilder) => {
-    console.log('editBuilder');
-    addHighlights();
-  });
-
-  vscode.window.onDidChangeActiveTextEditor(
-    (editor) => {
-      console.log('onDidChangeActiveTextEditor');
-      addHighlights();
-    },
-    null,
-    context.subscriptions
-  );
-
-  vscode.workspace.onDidChangeTextDocument(
-    (event) => {
-      console.log('onDidChangeTextDocument');
-      addHighlights();
-      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
-      //   triggerUpdateDecorations();
-      // }
-    },
-    null,
-    context.subscriptions
-  );
-
-  vscode.workspace.onDidSaveTextDocument(
-    (event) => {
-      console.log('onDidSaveTextDocument');
-      addHighlights();
-      // if (activeEditor && event.document === activeEditor.document && checkLanguage()) {
-      //   triggerUpdateDecorations();
-      // }
-    },
-    null,
-    context.subscriptions
-  );
-
-  vscode.window.onDidChangeActiveTextEditor(
-    (editor) => {
-      console.log('onDidChangeActiveTextEditor');
-    },
-    null,
-    context.subscriptions
-  );
-
-  // vscode.workspace.onDidChangeTextDocument((event) => {
-  //   console.log('onDidChangeTextDocument');
-  //   if (event.document === vscode.window.activeTextEditor!.document) {
-  //     console.log('Document changed.');
-  //   }
-  // });
-
-  // vscode.workspace.onDidChangeTextDocument((event) => {
-  //   console.log('onDidChangeTextDocument');
-
-  //   // if (event.document === activeTextEditor.document) {
-  //   addHighlights();
-  //   // }
-  // }, context.subscriptions);
+  addHighlights();
+  initChangeListeners();
 
   const subscriptionCommandDisposable = vscode.commands.registerCommand(
     'tailarchy.highlight',
@@ -122,7 +113,6 @@ function activate(context: ExtensionContext) {
 
   context.subscriptions.push(subscriptionCommandDisposable);
 }
-exports.activate = activate;
 
 function deactivate() {}
 
