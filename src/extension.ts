@@ -3,6 +3,9 @@ import { ExtensionContext } from 'vscode';
 import classNamesCategories from './classNamesCategories';
 import decorationTypes from './decorationTypes';
 
+//option to create groups of classes that are of the same type
+const mergeSiblingClassNames = true;
+
 type ClassNameCategory = {
   categoryName: string;
   categoryUri: string;
@@ -61,19 +64,51 @@ async function addHighlights() {
 
   for (const classNamesType of Object.values(classNamesCategories)) {
     const decorationsArray = [];
+
     for (const target of classNamesType.targets) {
-      let match;
+      let match: RegExpExecArray | null;
+
       const regex = new RegExp(
         '(?<=\\s|\'|"|^)' + target + '[^\\s\'"]*(?=\\s|\'|"|$)',
         'g'
       );
 
       while ((match = regex.exec(activeTextEditorDocumentText))) {
-        const startPos = activeTextEditor.document.positionAt(match.index);
+        let startPos = activeTextEditor.document.positionAt(match.index);
 
-        const endPos = activeTextEditor.document.positionAt(
+        let endPos = activeTextEditor.document.positionAt(
           match.index + match[0].length
         );
+
+        const beforeMatch = decorationsArray.filter((e) =>
+          e.range.contains(
+            activeTextEditor.document.positionAt(match!.index - 1)
+          )
+        )[0];
+
+        const afterMatch = decorationsArray.filter((e) =>
+          e.range.contains(
+            activeTextEditor.document.positionAt(
+              match!.index + match![0].length + 1
+            )
+          )
+        )[0];
+
+        if (beforeMatch !== undefined && mergeSiblingClassNames) {
+          startPos = beforeMatch.range.start;
+
+          const beforeMatchIndex = decorationsArray.indexOf(beforeMatch);
+
+          decorationsArray.splice(beforeMatchIndex, 1);
+        }
+
+        if (afterMatch !== undefined && mergeSiblingClassNames) {
+          endPos = afterMatch.range.end;
+
+          const afterMatchIndex = decorationsArray.indexOf(afterMatch);
+
+          decorationsArray.splice(afterMatchIndex, 1);
+        }
 
         const decoration = {
           range: new vscode.Range(startPos, endPos),
@@ -83,6 +118,7 @@ async function addHighlights() {
         decorationsArray.push(decoration);
       }
     }
+    // decorationsArray.f
 
     const decorationTypeKey =
       classNamesType.categoryUri as keyof typeof decorationTypes;
