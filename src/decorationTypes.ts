@@ -69,13 +69,13 @@ const decorationTypes = {
   typography: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(24, 21, 17, 0.07)',
+        backgroundColor: 'rgba(255, 153, 0, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(24, 21, 17, 0.07)',
+        backgroundColor: 'rgba(255, 153, 0, 0.07)',
         borderRadius: '2px 2px 7px 7px',
-        borderColor: 'rgba(24, 21, 17, 0.9)',
+        borderColor: 'rgba(255, 153, 0, 0.9)',
         borderWidth: '0px 2px 2px 2px',
         borderStyle: 'solid',
         // color: 'rgba(145, 198, 246, 1)',
@@ -87,13 +87,13 @@ const decorationTypes = {
   backgrounds: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(0, 255, 249, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(0, 255, 249, 0.07)',
         borderRadius: '2px 2px 7px 7px',
-        borderColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: 'rgba(0, 255, 249, 0.9)',
         borderWidth: '0px 2px 2px 2px',
         borderStyle: 'solid',
         // color: 'rgba(145, 198, 246, 1)',
@@ -103,13 +103,13 @@ const decorationTypes = {
   borders: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(128, 0, 255, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(128, 0, 255, 0.07)',
         borderRadius: '2px 2px 7px 7px',
-        borderColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: 'rgba(128, 0, 255, 0.9)',
         borderWidth: '0px 2px 2px 2px',
         borderStyle: 'solid',
         // color: 'rgba(145, 198, 246, 1)',
@@ -119,13 +119,13 @@ const decorationTypes = {
   effects: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(185, 182, 119, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'rgba(185, 182, 119, 0.07)',
         borderRadius: '2px 2px 7px 7px',
-        borderColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: 'rgba(185, 182, 119, 0.9)',
         borderWidth: '0px 2px 2px 2px',
         borderStyle: 'solid',
         // color: 'rgba(145, 198, 246, 1)',
