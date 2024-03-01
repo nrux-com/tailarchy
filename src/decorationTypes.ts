@@ -4,7 +4,7 @@ const decorationTypes = {
   layout: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(88, 160, 63, 0.04)',
+        backgroundColor: 'rgba(88, 160, 63, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
@@ -20,7 +20,7 @@ const decorationTypes = {
   'flexbox-and-grid': {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(219, 39, 119, 0.04)',
+        backgroundColor: 'rgba(219, 39, 119, 0.07)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
@@ -87,11 +87,11 @@ const decorationTypes = {
   backgrounds: {
     decorations: {
       subtle: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(0, 255, 249, 0.07)',
+        backgroundColor: 'rgba(0, 255, 249, 0.05)',
         borderRadius: '7px',
       }),
       hivis: vscode.window.createTextEditorDecorationType({
-        backgroundColor: 'rgba(0, 255, 249, 0.07)',
+        backgroundColor: 'rgba(0, 255, 249, 0.05)',
         borderRadius: '2px 2px 7px 7px',
         borderColor: 'rgba(0, 255, 249, 0.9)',
         borderWidth: '0px 2px 2px 2px',
