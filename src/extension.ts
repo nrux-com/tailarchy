@@ -62,10 +62,10 @@ async function addHighlights() {
 
   const activeTextEditorDocumentText = activeTextEditor.document.getText();
 
-  for (const classNamesType of Object.values(classNamesCategories)) {
+  for (const classNamesCategory of Object.values(classNamesCategories)) {
     const decorationsArray = [];
 
-    for (const target of classNamesType.targets) {
+    for (const target of classNamesCategory.targets) {
       let match: RegExpExecArray | null;
 
       const regex = new RegExp(
@@ -74,6 +74,23 @@ async function addHighlights() {
       );
 
       while ((match = regex.exec(activeTextEditorDocumentText))) {
+        // a flex and grid specific fix
+        // flex has classes like flex-col that would be detected as both layout and flex & grid categories
+        // if this problem exists with other classes a better solution must be engineered
+        if (
+          match[0] !== 'flex' &&
+          match[0].includes('flex') &&
+          classNamesCategory.categoryUri === 'layout'
+        )
+          continue;
+
+        if (
+          match[0] !== 'grid' &&
+          match[0].includes('grid') &&
+          classNamesCategory.categoryUri === 'layout'
+        )
+          continue;
+
         let startPos = activeTextEditor.document.positionAt(match.index);
 
         let endPos = activeTextEditor.document.positionAt(
@@ -112,7 +129,7 @@ async function addHighlights() {
 
         const decoration = {
           range: new vscode.Range(startPos, endPos),
-          hoverMessage: '**' + classNamesType.categoryName + '** rule(s)',
+          hoverMessage: '**' + classNamesCategory.categoryName + '** rule(s)',
         };
 
         decorationsArray.push(decoration);
@@ -121,7 +138,7 @@ async function addHighlights() {
     // decorationsArray.f
 
     const decorationTypeKey =
-      classNamesType.categoryUri as keyof typeof decorationTypes;
+      classNamesCategory.categoryUri as keyof typeof decorationTypes;
 
     const decorationType = decorationTypes[decorationTypeKey].decorations.hivis;
 
