@@ -161,11 +161,7 @@ function activate(context: ExtensionContext) {
   const subscriptionCommandDisposable = vscode.commands.registerCommand(
     'tailarchy.highlight',
     () => {
-      try {
-        console.log('command run highlight');
-      } catch (e) {
-        console.log(e);
-      }
+      addHighlights();
     }
   );
 
