@@ -3,9 +3,6 @@ import { ExtensionContext } from 'vscode';
 import classNamesCategories from './classNamesCategories';
 import decorationTypes from './decorationTypes';
 
-//option to create groups of classes that are of the same type
-const mergeSiblingClassNames = true;
-
 type ClassNameCategory = {
   categoryName: string;
   categoryUri: string;
@@ -61,6 +58,12 @@ async function addHighlights() {
   if (!activeTextEditor) return;
 
   const activeTextEditorDocumentText = activeTextEditor.document.getText();
+
+  const workspaceSettings = vscode.workspace.getConfiguration('tailarchy');
+  const mergeSiblingClassNames = workspaceSettings.get(
+    'mergeSiblingClassNames'
+  );
+  const visibilityLevel = workspaceSettings.get('visibility');
 
   for (const classNamesCategory of Object.values(classNamesCategories)) {
     const decorationsArray = [];
@@ -135,14 +138,16 @@ async function addHighlights() {
         decorationsArray.push(decoration);
       }
     }
-    // decorationsArray.f
 
     const decorationTypeKey =
       classNamesCategory.categoryUri as keyof typeof decorationTypes;
 
-    const decorationType = decorationTypes[decorationTypeKey].decorations.hivis;
+    const decorations = decorationTypes[decorationTypeKey].decorations;
 
-    activeTextEditor.setDecorations(decorationType, decorationsArray);
+    activeTextEditor.setDecorations(
+      visibilityLevel === 'Subtle' ? decorations.subtle : decorations.hivis,
+      decorationsArray
+    );
   }
 }
 

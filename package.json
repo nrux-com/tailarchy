@@ -19,7 +19,28 @@
         "command": "tailarchy.highlight",
         "title": "Highlight Tailwind Class Names"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "View",
+      "properties": {
+        "tailarchy.mergeSiblingClassNames": {
+          "type": "boolean",
+          "default": true,
+          "description": "Classes of the same type (eg. Flexbox & Grid) will be grouped together in a single highlight."
+        },
+        "tailarchy.visibility": {
+          "enum": [
+            "Subtle",
+            "Hivis"
+          ],
+          "type": [
+            "string"
+          ],
+          "default": "Subtle",
+          "description": "Specifies the type of highlight effect used."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
