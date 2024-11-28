@@ -72,7 +72,7 @@ async function addHighlights() {
       let match: RegExpExecArray | null;
 
       const regex = new RegExp(
-        '(?<=\\s|\'|"|^)' + target + '[^\\s\'"]*(?=\\s|\'|"|$)',
+        '(?<=\\s|\'|:|"|^)' + target + '[^\\s\'"]*(?=\\s|\'|"|$)',
         'g'
       );
 
