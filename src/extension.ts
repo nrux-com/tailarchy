@@ -52,6 +52,16 @@ function initChangeListeners(): Array<vscode.Disposable> {
   return subscriptions;
 }
 
+function getSettingsWithDefaultValues() {
+  const workspaceSettings = vscode.workspace.getConfiguration('tailarchy');
+
+  return {
+    mergeSiblingClassNames:
+      workspaceSettings.get<boolean>('mergeSiblingClassNames') ?? false,
+    visibilityLevel: workspaceSettings.get<string>('visibility') ?? 'Subtle',
+  };
+}
+
 async function addHighlights() {
   const activeTextEditor = vscode.window.activeTextEditor;
 
@@ -59,13 +69,11 @@ async function addHighlights() {
 
   const activeTextEditorDocumentText = activeTextEditor.document.getText();
 
-  const workspaceSettings = vscode.workspace.getConfiguration('tailarchy');
-  const mergeSiblingClassNames = workspaceSettings.get(
-    'mergeSiblingClassNames'
-  );
-  const visibilityLevel = workspaceSettings.get('visibility');
+  const workspaceSettings = getSettingsWithDefaultValues();
 
-  for (const classNamesCategory of Object.values(classNamesCategories)) {
+  for (const classNamesCategory of Object.values(
+    classNamesCategories as ClassNamesCategories
+  )) {
     const decorationsArray = [];
 
     for (const target of classNamesCategory.targets) {
@@ -114,7 +122,10 @@ async function addHighlights() {
           )
         )[0];
 
-        if (beforeMatch !== undefined && mergeSiblingClassNames) {
+        if (
+          beforeMatch !== undefined &&
+          workspaceSettings.mergeSiblingClassNames
+        ) {
           startPos = beforeMatch.range.start;
 
           const beforeMatchIndex = decorationsArray.indexOf(beforeMatch);
@@ -122,7 +133,10 @@ async function addHighlights() {
           decorationsArray.splice(beforeMatchIndex, 1);
         }
 
-        if (afterMatch !== undefined && mergeSiblingClassNames) {
+        if (
+          afterMatch !== undefined &&
+          workspaceSettings.mergeSiblingClassNames
+        ) {
           endPos = afterMatch.range.end;
 
           const afterMatchIndex = decorationsArray.indexOf(afterMatch);
@@ -145,7 +159,9 @@ async function addHighlights() {
     const decorations = decorationTypes[decorationTypeKey].decorations;
 
     activeTextEditor.setDecorations(
-      visibilityLevel === 'Subtle' ? decorations.subtle : decorations.hivis,
+      workspaceSettings.visibilityLevel === 'Subtle'
+        ? decorations.subtle
+        : decorations.hivis,
       decorationsArray
     );
   }
