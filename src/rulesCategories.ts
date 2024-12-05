@@ -1,4 +1,4 @@
-const classNamesCategories = {
+const rulesCategories = {
   layout: {
     categoryName: 'Layout',
     categoryUri: 'layout',
@@ -381,4 +381,4 @@ const classNamesCategories = {
   },
 };
 
-export default classNamesCategories;
+export default rulesCategories;
